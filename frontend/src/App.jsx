@@ -11,7 +11,9 @@ import {
   message
 } from "antd";
 import { SwapOutlined, SettingOutlined } from "@ant-design/icons";
-import { contract } from "./utils";
+import { thirdwebClient } from "./utils";
+import { useWalletBalance } from "thirdweb/react";
+import { sepolia, polygon } from "thirdweb/chains";
 
 const { Option } = Select;
 const { Text } = Typography;
@@ -20,8 +22,6 @@ export default function App() {
   const [bridgeAmountInput, setBridgeAmountInput] = useState(null);
   const [fromToken, setFromToken] = useState("xt-p");
   const [toToken, setToToken] = useState("xt-s");
-  const [fromTokenBalance, setFromTokenBalance] = useState("0.21");
-  const [toTokenBalance, setToTokenBalance] = useState("1011.3");
   const [loading, setLoading] = useState(false);
   const [log, setLog] = useState({
     message: "",
@@ -31,6 +31,40 @@ export default function App() {
   const accountObj = useActiveAccount() || {};
   const account = accountObj?.address?.toLowerCase();
   const activeChain = useActiveWalletChain() || {};
+
+  const {
+    data: sepoliaXT,
+    isLoading: isSepoliaXTLoading,
+    isError: isSepoliaXTError
+  } = useWalletBalance({
+    chain: sepolia,
+    address: account,
+    client: thirdwebClient,
+    tokenAddress: "0xe28662463DF1baAb6590AfC7E7deE1A4dEA77f4d"
+  });
+  console.log(
+    "Sepolia XT balance",
+    sepoliaXT,
+    isSepoliaXTLoading,
+    isSepoliaXTError
+  );
+
+  const {
+    data: polygonXT,
+    isLoading: isPolygonXTLoading,
+    isError: isPolygonXTError
+  } = useWalletBalance({
+    chain: polygon,
+    address: account,
+    client: thirdwebClient,
+    tokenAddress: "0x2a0c0073Ee8D651234E1be7Cd7Fb408f9B696cBA"
+  });
+  console.log(
+    "Polygon XT balance",
+    polygonXT,
+    isPolygonXTLoading,
+    isPolygonXTError
+  );
 
   const handleBridgeRequest = () => {
     console.log("Bridge Requested");
@@ -119,8 +153,15 @@ export default function App() {
             marginTop: "10px"
           }}
         >
-          <Text type="secondary">Balance: {fromTokenBalance}</Text>
-          <Button type="link">Max</Button>
+          <Text type="secondary">Balance: {polygonXT?.displayValue || 0}</Text>
+          <Button
+            type="link"
+            onClick={() => {
+              setBridgeAmountInput(polygonXT?.displayValue);
+            }}
+          >
+            Max
+          </Button>
         </Space>
       </div>
 
@@ -174,7 +215,7 @@ export default function App() {
             float: "right"
           }}
         >
-          Balance: {toTokenBalance}
+          Balance: {sepoliaXT?.displayValue || 0}
         </Text>
       </div>
       <Text type="secondary">XT on Sepolia</Text>
