@@ -9,7 +9,7 @@ This demo illustrates a basic use case of the Reactive Network, showcasing a tok
 flowchart LR
     subgraph Reactive Network
         subgraph ReactVM
-            RC(Reactive Contract)
+            RC(ReactiveBridge Contract)
         end
     end
 
