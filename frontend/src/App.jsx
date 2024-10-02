@@ -17,7 +17,7 @@ const { Option } = Select;
 const { Text } = Typography;
 
 export default function App() {
-  const [bridgeAmountInput, setBridgeAmountInput] = useState(0);
+  const [bridgeAmountInput, setBridgeAmountInput] = useState(null);
   const [fromToken, setFromToken] = useState("xt-p");
   const [toToken, setToToken] = useState("xt-s");
   const [fromTokenBalance, setFromTokenBalance] = useState("0.21");
@@ -82,7 +82,8 @@ export default function App() {
       ]}
     >
       {/* From Section */}
-      <div style={{ marginBottom: "20px" }}>
+      <div>
+        <Text type="secondary">Send</Text>
         <div
           style={{
             display: "flex",
@@ -139,7 +140,8 @@ export default function App() {
       </Divider>
 
       {/* To Section */}
-      <div style={{ marginBottom: "20px" }}>
+      <div>
+        <Text type="secondary">Receive</Text>
         <div
           style={{
             display: "flex",
