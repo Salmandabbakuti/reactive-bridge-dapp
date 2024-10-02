@@ -1,5 +1,10 @@
 import { useState } from "react";
-import { useActiveAccount, useActiveWalletChain } from "thirdweb/react";
+import {
+  useActiveAccount,
+  useActiveWalletChain,
+  useWalletBalance,
+  useSendAndConfirmTransaction
+} from "thirdweb/react";
 import {
   Card,
   Select,
@@ -11,9 +16,10 @@ import {
   message
 } from "antd";
 import { SwapOutlined, SettingOutlined } from "@ant-design/icons";
-import { thirdwebClient } from "./utils";
-import { useWalletBalance } from "thirdweb/react";
+import { thirdwebClient, contract } from "./utils";
 import { sepolia, polygon } from "thirdweb/chains";
+import { prepareContractCall } from "thirdweb";
+import { toWei } from "thirdweb/utils";
 
 const { Option } = Select;
 const { Text } = Typography;
@@ -31,6 +37,15 @@ export default function App() {
   const accountObj = useActiveAccount() || {};
   const account = accountObj?.address?.toLowerCase();
   const activeChain = useActiveWalletChain() || {};
+  const {
+    mutate: sendAndConfirmTx,
+    data: transactionReceipt,
+    isPending,
+    isError,
+    isSuccess
+  } = useSendAndConfirmTransaction();
+
+  console.log("tx", transactionReceipt, isPending, isError, isSuccess);
 
   const {
     data: sepoliaXT,
@@ -87,9 +102,27 @@ export default function App() {
         type: "warning"
       });
     }
-    setLoading(true);
-    message.info("Coming soon!");
-    setLoading(false);
+    const bridgeAmountInWei = toWei(bridgeAmountInput);
+    if (bridgeAmountInWei > polygonXT?.value)
+      return setLog({
+        message: "Insufficient Balance",
+        type: "warning"
+      });
+    try {
+      const tx = prepareContractCall({
+        contract,
+        method: "function bridgeRequest(uint256 _amount)",
+        params: [bridgeAmountInWei]
+      });
+      sendAndConfirmTx(tx);
+      if (isError) {
+        console.error("Bridge Request Error", transactionReceipt);
+        setLog({ message: "Bridge Request Failed", type: "danger" });
+      }
+    } catch (error) {
+      console.error("Bridge Request Error", error);
+      setLog({ message: "Bridge Request Failed", type: "danger" });
+    }
   };
 
   return (
@@ -107,7 +140,8 @@ export default function App() {
           size="large"
           type="primary"
           key="bridge-btn"
-          loading={loading}
+          loading={isPending}
+          disabled={isPending}
           onClick={handleBridgeRequest}
           block
         >
