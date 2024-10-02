@@ -72,6 +72,20 @@ contract ReactiveBridge is IReactive, AbstractReactive {
 
     // Methods specific to ReactVM instance of the contract
 
+    /**
+     * @notice Reacts to the event that meets the subscription criteria
+     * @dev This function is called by the ReactVM only
+     * @dev decodes receiver and amount from the event data and encode them in payload to bridgeMint tokens on the destination chain
+     * @dev gets the destination chain ID and address from reverse mapping and emits Callback event
+     * @dev The emitted Callback event will be caught by the reactive network and forwarded to the destination chain with the payload
+     * @param chain_id origin chain ID
+     * @param _contract origin contract address
+     * @param topic_0 Topic 0 of the event
+     * @param topic_1 Topic 1 of the event
+     * @param topic_2 Topic 2 of the event
+     * @param topic_3 Topic 3 of the event
+     * @param data Event data encoded as byte array
+     */
     function react(
         uint256 chain_id,
         address _contract,
@@ -93,25 +107,23 @@ contract ReactiveBridge is IReactive, AbstractReactive {
             data,
             ++counter
         );
-        // listen to BridgeRequest event on both chains
-        if (topic_0 == BRIDGE_REQUEST_EVENT_TOPIC_0) {
-            (, , address sender, uint256 amount) = abi.decode(
-                data,
-                (address, uint256, address, uint256)
-            );
-            bytes memory payload = abi.encodeWithSignature(
-                "bridgeMint(address,address,uint256)", // first 160 bits will be replaced by reactvm address
-                address(0), // Eventually be replaced with Reactvm address
-                sender,
-                amount
-            );
-            // Getting the destination chain ID and address. retrieve opposite chain ID and address from the current `chain_id` and `origin`
-            uint256 destinationChainId = chain_id == origin1ChainId
-                ? origin2ChainId
-                : origin1ChainId;
-            address destination = _contract == origin1 ? origin2 : origin1;
-            emit Callback(destinationChainId, destination, GAS_LIMIT, payload);
-        }
+        // Decoding receiver and amount from the event data
+        (, , address receiver, uint256 amount) = abi.decode(
+            data,
+            (address, uint256, address, uint256)
+        );
+        bytes memory payload = abi.encodeWithSignature(
+            "bridgeMint(address,address,uint256)", // first 160 bits will be replaced by reactvm address
+            address(0), // Eventually be replaced with Reactvm address
+            receiver,
+            amount
+        );
+        // Getting the destination chain ID and address. retrieve opposite chain ID and address from the current `chain_id` and `origin`
+        uint256 destinationChainId = chain_id == origin1ChainId
+            ? origin2ChainId
+            : origin1ChainId;
+        address destination = _contract == origin1 ? origin2 : origin1;
+        emit Callback(destinationChainId, destination, GAS_LIMIT, payload);
     }
 
     // Methods for testing environment only

@@ -5,11 +5,11 @@ import "../../../lib/openzeppelin-contracts/contracts/token/ERC20/ERC20.sol";
 import "../../AbstractCallback.sol";
 
 contract CrossToken is ERC20, AbstractCallback {
-    address public owner;
+    address owner;
     event BridgeRequest(
         address origin,
         uint256 chainId,
-        address sender,
+        address receiver,
         uint256 amount
     );
 
@@ -41,8 +41,11 @@ contract CrossToken is ERC20, AbstractCallback {
     }
 
     /**
-     * @notice Mint tokens to the receiver
-     * @param sender Sender address
+     * @notice Mints `_amount` of tokens to the `_receiver` by callback proxy contract
+     * @dev Only authorized sender can call this function i.e callback proxy contract
+     * @dev if zero address is passed as _callback_sender in constructor, then anyone can call this function
+     * @dev Sender is the reactvm address(deployer) to make sure that callback is coming from deployer reactvm
+     * @param sender Sender address (reactvm address)
      * @param _receiver Receiver address
      * @param _amount Amount to mint
      */
@@ -67,8 +70,9 @@ contract CrossToken is ERC20, AbstractCallback {
 
     /**
      * @notice Bridge request to send tokens to the other chain
-     * @param _amount Amount to bridge
      * @dev Burns the tokens from the sender and emits BridgeRequest event
+     * @dev ReactiveBridge contract listens to this event and mints the tokens on the other chain
+     * @param _amount Amount to bridge
      */
     function bridgeRequest(uint256 _amount) external {
         _burn(msg.sender, _amount);
