@@ -6,27 +6,21 @@ This demo illustrates a basic use case of the Reactive Network, showcasing a tok
 
 ```mermaid
 %%{ init: { 'flowchart': { 'curve': 'basis' } } }%%
-flowchart TB
-    subgraph RN["Reactive Network"]
-        subgraph RV["ReactVM"]
-            subgraph RC["Reactive Contract"]
-                BDRC("ReactiveBridge")
-            end
-        end
-    end
-    subgraph L1["L1 Network"]
-        subgraph OCC["Origin Chain Contract"]
-            BDL1C("CrossToken Contract")
-        end
-        subgraph DCC["Destination Chain Contract"]
-            BDL1Cb("CrossToken Callback")
+flowchart LR
+    subgraph Reactive Network
+        subgraph ReactVM
+            RC(Reactive Contract)
         end
     end
 
-OCC -. emitted log .-> BDRC
-BDRC -. callback .-> DCC
-
-style RV stroke:transparent
+    subgraph Origin1
+        OCC(CrossToken Contract)
+    end
+    subgraph Origin2
+        DCC(CrossToken Contrat)
+    end
+OCC -.->|BridgeRequest Event| RC
+RC -.->|Callback| DCC
 ```
 
 ## Contracts
@@ -50,17 +44,18 @@ To deploy testnet contracts to Sepolia, follow these steps, making sure you subs
 - `ORIGIN1_CHAINID`
 - `ORIGIN2_CHAINID`
 - `SYSTEM_CONTRACT_ADDR`
+- `CALLBACK_SENDER_ADDR`
 
 You can use the recommended Sepolia RPC URL: `https://rpc2.sepolia.org`.
 
 ### Step 1
 
-Deploy the `CrossToken` on both chains(eg. Polygon & Sepolia) and assign the `Deployed to` address from the response to `ORIGIN1_ADDR` and `ORIGIN2_ADDR` respectively.
+Deploy the `CrossToken` with authorized callback sender on both chains(eg. Polygon & Sepolia) and assign the `Deployed to` address from the response to `ORIGIN1_ADDR` and `ORIGIN2_ADDR` respectively.
 
 ```bash
-forge create --rpc-url $ORIGIN1_RPC --private-key $PRIVATE_KEY src/demos/token-bridge/CrossToken.sol:CrossToken
+forge create --rpc-url $ORIGIN1_RPC --private-key $PRIVATE_KEY src/demos/token-bridge/CrossToken.sol:CrossToken --constructor-args 1000000000000000000000 $CALLBACK_SENDER_ADDR
 
-forge create --rpc-url $ORIGIN2_RPC --private-key $PRIVATE_KEY src/demos/token-bridge/CrossToken.sol:CrossToken
+forge create --rpc-url $ORIGIN2_RPC --private-key $PRIVATE_KEY src/demos/token-bridge/CrossToken.sol:CrossToken --constructor-args 1000000000000000000000 $CALLBACK_SENDER_ADDR
 ```
 
 #### Callback Payment
