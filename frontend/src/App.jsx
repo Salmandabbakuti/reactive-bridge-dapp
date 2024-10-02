@@ -28,7 +28,6 @@ export default function App() {
   const [bridgeAmountInput, setBridgeAmountInput] = useState(null);
   const [fromToken, setFromToken] = useState("xt-p");
   const [toToken, setToToken] = useState("xt-s");
-  const [loading, setLoading] = useState(false);
   const [log, setLog] = useState({
     message: "",
     type: ""
@@ -40,12 +39,22 @@ export default function App() {
   const {
     mutate: sendAndConfirmTx,
     data: transactionReceipt,
+    error: txError,
+    failureReason: txFailureReason,
     isPending,
     isError,
     isSuccess
   } = useSendAndConfirmTransaction();
 
-  console.log("tx", transactionReceipt, isPending, isError, isSuccess);
+  console.log(
+    "tx",
+    transactionReceipt,
+    txError,
+    isPending,
+    isError,
+    isSuccess,
+    txFailureReason
+  );
 
   const {
     data: sepoliaXT,
@@ -115,10 +124,6 @@ export default function App() {
         params: [bridgeAmountInWei]
       });
       sendAndConfirmTx(tx);
-      if (isError) {
-        console.error("Bridge Request Error", transactionReceipt);
-        setLog({ message: "Bridge Request Failed", type: "danger" });
-      }
     } catch (error) {
       console.error("Bridge Request Error", error);
       setLog({ message: "Bridge Request Failed", type: "danger" });
@@ -255,8 +260,38 @@ export default function App() {
       <Text type="secondary">XT on Sepolia</Text>
 
       {/* Log Messages */}
-      <div style={{ textAlign: "center", color: "red" }}>
-        {log?.message && <Text type={log?.type}>{log.message}</Text>}
+      <Divider />
+      <div style={{ textAlign: "center", color: "red", marginTop: "20px" }}>
+        <Space direction="vertical">
+          {log?.message && <Text type={log?.type}>{log.message}</Text>}
+          {isPending && (
+            <Text type="secondary">Transaction in progress...</Text>
+          )}
+          {isSuccess && <Text type="success">Transaction successful!</Text>}
+          {isError && (
+            <Text type="danger">Transaction failed! {txError?.message}</Text>
+          )}
+          {transactionReceipt?.transactionHash && (
+            <Space direction="vertical">
+              <a
+                href={`https://polygonscan.com/tx/${transactionReceipt?.transactionHash}`}
+                target="_blank"
+                rel="noreferrer"
+              >
+                {" "}
+                View Source Transaction
+              </a>
+              <a
+                href={`https://sepolia.etherscan.io/token/0xe28662463df1baab6590afc7e7dee1a4dea77f4d?a=${account}`}
+                target="_blank"
+                rel="noreferrer"
+              >
+                {" "}
+                View Destination Balance
+              </a>
+            </Space>
+          )}
+        </Space>
       </div>
     </Card>
   );
