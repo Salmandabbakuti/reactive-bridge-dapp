@@ -39,14 +39,14 @@ export default function ConnectWalletButton() {
       }}
       detailsButton={{
         displayBalanceToken: {
-          [sepolia.id]: "0xe28662463DF1baAb6590AfC7E7deE1A4dEA77f4d", // token address to display balance for
-          [polygon.id]: "0x2a0c0073Ee8D651234E1be7Cd7Fb408f9B696cBA" // token address to display balance for
+          [sepolia.id]: "0x3Eed33DCf10eA9543380E71b9E245dca16c30605", // token address to display balance for
+          [polygon.id]: "0xd231fE46b4A8500d4aDD5AD98EC3c4ca56E7dee4" // token address to display balance for
         }
       }}
       supportedTokens={{
         [polygon.id]: [
           {
-            address: "0x2a0c0073Ee8D651234E1be7Cd7Fb408f9B696cBA",
+            address: "0xd231fE46b4A8500d4aDD5AD98EC3c4ca56E7dee4",
             name: "CrossToken",
             symbol: "XT",
             icon: "https://example.com/icon.png"
@@ -54,7 +54,7 @@ export default function ConnectWalletButton() {
         ],
         [sepolia.id]: [
           {
-            address: "0xe28662463DF1baAb6590AfC7E7deE1A4dEA77f4d",
+            address: "0x3Eed33DCf10eA9543380E71b9E245dca16c30605",
             name: "CrossToken",
             symbol: "XT",
             icon: "https://example.com/icon.png"

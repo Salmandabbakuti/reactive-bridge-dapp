@@ -8,5 +8,5 @@ export const thirdwebClient = createThirdwebClient({ clientId });
 export const contract = getContract({
   chain: polygon,
   client: thirdwebClient,
-  address: "0x2a0c0073Ee8D651234E1be7Cd7Fb408f9B696cBA"
+  address: "0xd231fE46b4A8500d4aDD5AD98EC3c4ca56E7dee4"
 });

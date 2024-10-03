@@ -64,7 +64,7 @@ export default function App() {
     chain: sepolia,
     address: account,
     client: thirdwebClient,
-    tokenAddress: "0xe28662463DF1baAb6590AfC7E7deE1A4dEA77f4d"
+    tokenAddress: "0x3Eed33DCf10eA9543380E71b9E245dca16c30605"
   });
   console.log(
     "Sepolia XT balance",
@@ -81,7 +81,7 @@ export default function App() {
     chain: polygon,
     address: account,
     client: thirdwebClient,
-    tokenAddress: "0x2a0c0073Ee8D651234E1be7Cd7Fb408f9B696cBA"
+    tokenAddress: "0xd231fE46b4A8500d4aDD5AD98EC3c4ca56E7dee4"
   });
   console.log(
     "Polygon XT balance",
@@ -282,7 +282,7 @@ export default function App() {
                 View Source Transaction
               </a>
               <a
-                href={`https://sepolia.etherscan.io/token/0xe28662463df1baab6590afc7e7dee1a4dea77f4d?a=${account}`}
+                href={`https://sepolia.etherscan.io/token/0x3Eed33DCf10eA9543380E71b9E245dca16c30605?a=${account}`}
                 target="_blank"
                 rel="noreferrer"
               >

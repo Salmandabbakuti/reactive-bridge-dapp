@@ -48,6 +48,12 @@ To deploy testnet contracts to Sepolia, follow these steps, making sure you subs
 
 You can use the recommended Sepolia RPC URL: `https://rpc2.sepolia.org`.
 
+Load the environment variables:
+
+```bash
+source .env
+```
+
 ### Step 1
 
 Deploy the `CrossToken` with authorized callback sender on both chains(eg. Polygon & Sepolia) and assign the `Deployed to` address from the response to `ORIGIN1_ADDR` and `ORIGIN2_ADDR` respectively.
