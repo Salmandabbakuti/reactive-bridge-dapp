@@ -130,10 +130,52 @@ export default function App() {
     }
   };
 
+  const handleMint = () => {
+    console.log("Mint Requested");
+    setLog({ message: "", type: "" });
+    if (!account) {
+      return setLog({
+        message: "Please connect your wallet",
+        type: "warning"
+      });
+    }
+    if (activeChain?.id !== 137) {
+      return setLog({
+        message: "Please connect to Polygon Network",
+        type: "warning"
+      });
+    }
+    const tx = prepareContractCall({
+      contract,
+      method: "function mint(address _receiver, uint256 _amount)",
+      params: [account, toWei("50")]
+    });
+    sendAndConfirmTx(tx);
+  };
+
   return (
     <Card
       title="Bridge"
-      extra={<SettingOutlined />}
+      extra={
+        <Space>
+          {
+            // if bridge amount is greater than account balance, show mint button
+            toWei(bridgeAmountInput) > polygonXT?.value && (
+              <Text type="secondary">
+                Not enough XT on Polygon to bridge?{" "}
+                <Button
+                  title="Mints 50 XT on Polygon for testing"
+                  type="link"
+                  onClick={handleMint}
+                >
+                  Mint
+                </Button>
+              </Text>
+            )
+          }
+          <SettingOutlined />
+        </Space>
+      }
       style={{
         maxWidth: 600,
         margin: "0 auto",
