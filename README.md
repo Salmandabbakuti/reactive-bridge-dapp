@@ -121,7 +121,8 @@ This should trigger the callback on the destination chain(Sepolia) and mint the 
 - [Reactive Network](https://reactive.network) - Facilitates seamless cross-chain and multi-chain interactions, breaking down barriers for true blockchain interoperability.
 - [Foundry](https://book.getfoundry.sh/) - A smart contract development toolchain. It provides a set of tools to help you build, test, and deploy smart contracts.
 - [Solidity](https://docs.soliditylang.org/en/v0.8.24/) - Ethereum's smart contract programming language
-- [Thirdweb](https://thirdweb.com)
+- [Thirdweb](https://thirdweb.com) - Full-stack, open-source web3 development platform. Frontend, backend, and onchain tools to build complete web3 apps — on every EVM chain.
+- [Antd](https://ant.design/) - A design system for enterprise-level products. Create an efficient and enjoyable work experience.
 - [React + Vite](https://vitejs.dev/) - Frontend development environment for building fast and modern web apps
 
 ## Safety & Security

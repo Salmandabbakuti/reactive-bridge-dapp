@@ -160,7 +160,7 @@ export default function App() {
         <Space>
           {
             // if bridge amount is greater than account balance, show mint button
-            toWei(bridgeAmountInput) > polygonXT?.value && (
+            toWei(bridgeAmountInput || "0") > polygonXT?.value && (
               <Text type="secondary">
                 Not enough XT on Polygon to bridge?{" "}
                 <Button
