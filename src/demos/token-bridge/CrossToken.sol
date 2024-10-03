@@ -6,9 +6,17 @@ import "../../AbstractCallback.sol";
 
 contract CrossToken is ERC20, AbstractCallback {
     address owner;
+
     event BridgeRequest(
         address origin,
         uint256 chainId,
+        address receiver,
+        uint256 amount
+    );
+
+    event BridgeMint(
+        address txOrigin,
+        address caller,
         address receiver,
         uint256 amount
     );
@@ -56,15 +64,18 @@ contract CrossToken is ERC20, AbstractCallback {
     ) external authorizedSenderOnly {
         require(sender == owner, "No Permission!"); // sender is the reactvm address(deployer)
         _mint(_receiver, _amount);
+        emit BridgeMint(tx.origin, msg.sender, _receiver, _amount);
     }
 
     /**
      * @notice Mint tokens to the receiver by the owner
-     * @dev for testing purposes. Only owner can call this function to mint tokens to the receiver
+     * @dev Only owner can should call this function to mint tokens to the receiver
+     * @dev For demo purposes, this function didn't have any access control. In production, access control should be added
+     * @dev This function let users to mint tokens themselves. Then, they can bridge the tokens to the other chain
      * @param _receiver Receiver address
      * @param _amount Amount to mint
      */
-    function mint(address _receiver, uint256 _amount) external onlyOwner {
+    function mint(address _receiver, uint256 _amount) external {
         _mint(_receiver, _amount);
     }
 
