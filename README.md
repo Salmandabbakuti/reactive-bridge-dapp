@@ -4,6 +4,8 @@
 
 This demo illustrates a basic use case of the Reactive Network, showcasing a token bridge between two chains. The setup consists of a ERC20 token contract deployed on origin & destination chains, with a Reactive Contract managing the bridge between them. The Reactive Contract listens for events on both chains, emits logs, and triggers callbacks based on predefined conditions.
 
+![Screen1](https://github.com/user-attachments/assets/cc6c018e-d1c1-44a8-8ce6-628b4a0cdaaf)
+
 ### Features
 
 - **Two-way Token Bridge:** The demo supports two-way(A->B, B->A) token bridging between two chains. The Reactive Contract designed to listen for events on both chains and trigger callbacks to mint tokens on the destination chain. For now, the demo only showcase A->BA->B(Polygon to Sepolia) because, Sepolia is only destination chain supported by Reactive Network as of now.
