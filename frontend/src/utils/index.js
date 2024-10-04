@@ -1,5 +1,6 @@
 import { createThirdwebClient, getContract } from "thirdweb";
 import { polygon } from "thirdweb/chains";
+import { POLYGON_XT_CONTRACT_ADDRESS } from "./constants";
 
 const clientId = import.meta.env.VITE_THIRDWEB_CLIENT_ID;
 
@@ -8,5 +9,5 @@ export const thirdwebClient = createThirdwebClient({ clientId });
 export const contract = getContract({
   chain: polygon,
   client: thirdwebClient,
-  address: "0xd231fE46b4A8500d4aDD5AD98EC3c4ca56E7dee4"
+  address: POLYGON_XT_CONTRACT_ADDRESS
 });

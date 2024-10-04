@@ -16,10 +16,14 @@ import {
   message
 } from "antd";
 import { SwapOutlined, SettingOutlined } from "@ant-design/icons";
-import { thirdwebClient, contract } from "./utils";
 import { sepolia, polygon } from "thirdweb/chains";
 import { prepareContractCall } from "thirdweb";
 import { toWei } from "thirdweb/utils";
+import { thirdwebClient, contract } from "./utils";
+import {
+  POLYGON_XT_CONTRACT_ADDRESS,
+  SEPOLIA_XT_CONTRACT_ADDRESS
+} from "./utils/constants";
 
 const { Option } = Select;
 const { Text } = Typography;
@@ -37,24 +41,32 @@ export default function App() {
   const account = accountObj?.address?.toLowerCase();
   const activeChain = useActiveWalletChain() || {};
   const {
-    mutate: sendAndConfirmTx,
-    data: transactionReceipt,
-    error: txError,
-    failureReason: txFailureReason,
-    isPending,
-    isError,
-    isSuccess
+    mutate: sendAndConfirmBridgeRequestTx,
+    data: bridgeRequestTxReceipt,
+    error: bridgeRequestTxError,
+    failureReason: bridgeRequestTxFailureReason,
+    isPending: isBridgeRequestPending,
+    isError: isBridgeRequestError,
+    isSuccess: isBridgeRequestSuccess
   } = useSendAndConfirmTransaction();
 
-  console.log(
-    "tx",
-    transactionReceipt,
-    txError,
-    isPending,
-    isError,
-    isSuccess,
-    txFailureReason
-  );
+  const {
+    mutate: sendAndConfirmMintTx,
+    data: mintTransactionReceipt,
+    error: mintTxError,
+    failureReason: mintTxFailureReason,
+    isPending: isMintPending,
+    isError: isMintError
+  } = useSendAndConfirmTransaction();
+
+  console.log("bridge tx->", {
+    bridgeRequestTxReceipt,
+    bridgeRequestTxError,
+    bridgeRequestTxFailureReason,
+    isBridgeRequestPending,
+    isBridgeRequestError,
+    isBridgeRequestSuccess
+  });
 
   const {
     data: sepoliaXT,
@@ -64,7 +76,7 @@ export default function App() {
     chain: sepolia,
     address: account,
     client: thirdwebClient,
-    tokenAddress: "0x3Eed33DCf10eA9543380E71b9E245dca16c30605"
+    tokenAddress: SEPOLIA_XT_CONTRACT_ADDRESS
   });
   console.log(
     "Sepolia XT balance",
@@ -81,7 +93,7 @@ export default function App() {
     chain: polygon,
     address: account,
     client: thirdwebClient,
-    tokenAddress: "0xd231fE46b4A8500d4aDD5AD98EC3c4ca56E7dee4"
+    tokenAddress: POLYGON_XT_CONTRACT_ADDRESS
   });
   console.log(
     "Polygon XT balance",
@@ -123,7 +135,7 @@ export default function App() {
         method: "function bridgeRequest(uint256 _amount)",
         params: [bridgeAmountInWei]
       });
-      sendAndConfirmTx(tx);
+      sendAndConfirmBridgeRequestTx(tx);
     } catch (error) {
       console.error("Bridge Request Error", error);
       setLog({ message: "Bridge Request Failed", type: "danger" });
@@ -150,7 +162,7 @@ export default function App() {
       method: "function mint(address _receiver, uint256 _amount)",
       params: [account, toWei("50")]
     });
-    sendAndConfirmTx(tx);
+    sendAndConfirmMintTx(tx);
   };
 
   return (
@@ -160,13 +172,14 @@ export default function App() {
         <Space>
           {
             // if bridge amount is greater than account balance, show mint button
-            toWei(bridgeAmountInput) > polygonXT?.value && (
+            toWei(bridgeAmountInput || "0") > polygonXT?.value && (
               <Text type="secondary">
                 Not enough XT on Polygon to bridge?{" "}
                 <Button
                   title="Mints 50 XT on Polygon for testing"
                   type="link"
                   onClick={handleMint}
+                  loading={isMintPending}
                 >
                   Mint
                 </Button>
@@ -187,8 +200,8 @@ export default function App() {
           size="large"
           type="primary"
           key="bridge-btn"
-          loading={isPending}
-          disabled={isPending}
+          loading={isBridgeRequestPending}
+          disabled={isBridgeRequestPending}
           onClick={handleBridgeRequest}
           block
         >
@@ -305,18 +318,41 @@ export default function App() {
       <Divider />
       <div style={{ textAlign: "center", color: "red", marginTop: "20px" }}>
         <Space direction="vertical">
+          {/* General Check Logs */}
           {log?.message && <Text type={log?.type}>{log.message}</Text>}
-          {isPending && (
-            <Text type="secondary">Transaction in progress...</Text>
+          {/* Mint Logs */}
+          {isMintPending && (
+            <Text type="secondary">Minting in progress...</Text>
           )}
-          {isSuccess && <Text type="success">Transaction successful!</Text>}
-          {isError && (
-            <Text type="danger">Transaction failed! {txError?.message}</Text>
+          {isMintError && (
+            <Text type="danger">
+              Minting failed! {mintTxError?.message || mintTxFailureReason}
+            </Text>
           )}
-          {transactionReceipt?.transactionHash && (
+          {mintTransactionReceipt &&
+            mintTransactionReceipt?.transactionHash && (
+              <Text type="success">Minted 50 XT on Polygon successfully!</Text>
+            )}
+          {/* Bridge Logs */}
+          {isBridgeRequestPending && (
+            <Text type="secondary">Bridge Transaction in progress...</Text>
+          )}
+          {isBridgeRequestSuccess && (
+            <Text type="success">Transaction successful!</Text>
+          )}
+          {isBridgeRequestError && (
+            <Text type="danger">
+              Transaction failed! {bridgeRequestTxError?.message}
+            </Text>
+          )}
+          {bridgeRequestTxReceipt?.transactionHash && (
             <Space direction="vertical">
+              <Text type="primary">
+                Note: It may take a few minutes for the balances to reflect on
+                the destination chain.
+              </Text>
               <a
-                href={`https://polygonscan.com/tx/${transactionReceipt?.transactionHash}`}
+                href={`https://polygonscan.com/tx/${bridgeRequestTxReceipt?.transactionHash}`}
                 target="_blank"
                 rel="noreferrer"
               >
@@ -324,7 +360,17 @@ export default function App() {
                 View Source Transaction
               </a>
               <a
-                href={`https://sepolia.etherscan.io/token/0x3Eed33DCf10eA9543380E71b9E245dca16c30605?a=${account}`}
+                href={
+                  "https://kopli.reactscan.net/rvms/0xc7203561EF179333005a9b81215092413aB86aE9"
+                }
+                target="_blank"
+                rel="noreferrer"
+              >
+                {" "}
+                View Reactive Transaction
+              </a>
+              <a
+                href={`https://sepolia.etherscan.io/token/${SEPOLIA_XT_CONTRACT_ADDRESS}?a=${account}`}
                 target="_blank"
                 rel="noreferrer"
               >
