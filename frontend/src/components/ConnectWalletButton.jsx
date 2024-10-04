@@ -2,6 +2,10 @@ import { ConnectButton } from "thirdweb/react";
 import { sepolia, polygon } from "thirdweb/chains";
 import { createWallet } from "thirdweb/wallets";
 import { thirdwebClient } from "../utils";
+import {
+  POLYGON_XT_CONTRACT_ADDRESS,
+  SEPOLIA_XT_CONTRACT_ADDRESS
+} from "../utils/constants";
 
 const thirdwebWallets = [
   createWallet("io.metamask"),
@@ -39,14 +43,14 @@ export default function ConnectWalletButton() {
       }}
       detailsButton={{
         displayBalanceToken: {
-          [sepolia.id]: "0x3Eed33DCf10eA9543380E71b9E245dca16c30605", // token address to display balance for
-          [polygon.id]: "0xd231fE46b4A8500d4aDD5AD98EC3c4ca56E7dee4" // token address to display balance for
+          [sepolia.id]: SEPOLIA_XT_CONTRACT_ADDRESS, // token address to display balance for
+          [polygon.id]: POLYGON_XT_CONTRACT_ADDRESS // token address to display balance for
         }
       }}
       supportedTokens={{
         [polygon.id]: [
           {
-            address: "0xd231fE46b4A8500d4aDD5AD98EC3c4ca56E7dee4",
+            address: POLYGON_XT_CONTRACT_ADDRESS,
             name: "CrossToken",
             symbol: "XT",
             icon: "https://example.com/icon.png"
@@ -54,7 +58,7 @@ export default function ConnectWalletButton() {
         ],
         [sepolia.id]: [
           {
-            address: "0x3Eed33DCf10eA9543380E71b9E245dca16c30605",
+            address: SEPOLIA_XT_CONTRACT_ADDRESS,
             name: "CrossToken",
             symbol: "XT",
             icon: "https://example.com/icon.png"
