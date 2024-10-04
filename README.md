@@ -1,8 +1,8 @@
-# Reactive Bridge Demo
+# Reactive Bridge
 
 ## Overview
 
-This demo illustrates a basic use case of the Reactive Network, showcasing a token bridge between two chains. The setup consists of a ERC20 token contract deployed on origin & destination chains, with a Reactive Contract managing the bridge between them. The Reactive Contract listens for events on both chains, emits logs, and triggers callbacks based on predefined conditions. For now, the demo only showcase A->B(Polygon to Sepolia) because, Sepolia is only destination chain supported by Reactive Network as of now. But, the Reactive contract is designed to support two-way token bridging(A->B and B->A).
+This project illustrates a basic use case of the Reactive Network, showcasing a token bridge between two chains. The setup consists of a ERC20 token contract deployed on origin & destination chains, with a Reactive Contract managing the bridge between them. The Reactive Contract listens for events on both chains, emits logs, and triggers callbacks based on predefined conditions. For now, the demo only showcase A->B(Polygon to Sepolia) because, Sepolia is only destination chain supported by Reactive Network as of now. But, the Reactive contract is designed to support two-way token bridging(A->B and B->A).
 
 ![Screen1](https://github.com/user-attachments/assets/cc6c018e-d1c1-44a8-8ce6-628b4a0cdaaf)
 
@@ -168,6 +168,11 @@ npm run dev
 ```
 
 Open your browser and navigate to `http://localhost:3000` to view the demo.
+
+### Demo
+
+https://github.com/user-attachments/assets/803c6520-aedd-4be1-9d18-4057da0a2e1f
+
 
 ### Bridging Workflow
 
