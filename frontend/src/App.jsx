@@ -233,9 +233,13 @@ export default function App() {
             style={{ maxWidth: 300 }}
             onChange={setFromToken}
           >
-            <Option value="xt-p">XT on Polygon</Option>
+            <Option value="xt-p">
+              <img src="./xt-logo.png" alt="xt" width="15" /> XT on{" "}
+              <img src="./poly-logo.svg" alt="polygon" width="15" /> Polygon
+            </Option>
             <Option value="xt-s" disabled>
-              XT on Sepolia
+              <img src="./xt-logo.png" alt="xt" width="15" /> XT on{" "}
+              <img src="./eth-logo.svg" alt="sepolia" width="10" /> Sepolia
             </Option>
           </Select>
         </div>
@@ -297,9 +301,13 @@ export default function App() {
             style={{ maxWidth: 300 }}
             onChange={setToToken}
           >
-            <Option value="xt-s">XT on Sepolia</Option>
+            <Option value="xt-s">
+              <img src="./xt-logo.png" alt="xt" width="15" /> XT on{" "}
+              <img src="./eth-logo.svg" alt="sepolia" width="10" /> Sepolia
+            </Option>
             <Option value="xt-p" disabled>
-              XT on Polygon
+              <img src="./xt-logo.png" alt="xt" width="15" /> XT on{" "}
+              <img src="./poly-logo.svg" alt="polygon" width="15" /> Polygon
             </Option>
           </Select>
         </div>
